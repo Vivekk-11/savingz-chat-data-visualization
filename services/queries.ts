@@ -11,7 +11,6 @@ export const getData = cache(async (sortBy: "number" | "latest") => {
     const database = client.db("sawingz-db");
     const collection = database.collection("chatHistoryCollection");
 
-    let data;
     if (sortBy === "latest") {
       const data = await collection
         .aggregate([
@@ -26,9 +25,19 @@ export const getData = cache(async (sortBy: "number" | "latest") => {
         .toArray();
       return data;
     } else {
+      const data = await collection
+        .aggregate([
+          {
+            $group: {
+              _id: "$userId",
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { count: -1 } },
+        ])
+        .toArray();
+      return data;
     }
-
-    return data;
   } catch (error: any) {
     console.log("Error occurred:-", error);
   }
