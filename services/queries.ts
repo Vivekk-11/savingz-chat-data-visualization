@@ -4,7 +4,7 @@ import { cache } from "react";
 
 const client = new MongoClient(process.env.MONGODB_URL!);
 
-export const getData = cache(async (sortBy: "number" | "latest") => {
+export const getData = async (sortBy: "number" | "latest") => {
   try {
     await client.connect();
 
@@ -14,13 +14,14 @@ export const getData = cache(async (sortBy: "number" | "latest") => {
     if (sortBy === "latest") {
       const data = await collection
         .aggregate([
-          { $sort: { requestProcessedAt: -1 } },
           {
             $group: {
               _id: "$userId",
               count: { $sum: 1 },
+              latestRequestProcessedAt: { $max: "$requestProcessedAt" },
             },
           },
+          { $sort: { latestRequestProcessedAt: -1 } },
         ])
         .toArray();
       return data;
@@ -41,4 +42,4 @@ export const getData = cache(async (sortBy: "number" | "latest") => {
   } catch (error: any) {
     console.log("Error occurred:-", error);
   }
-});
+};
