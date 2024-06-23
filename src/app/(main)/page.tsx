@@ -2,17 +2,11 @@
 
 import { useSearchParams } from "next/navigation";
 import { getData } from "../../../services/queries";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Document } from "mongodb";
 import { DataTable } from "./_components/data-table";
 
-interface Props {
-  searchParams: {
-    sortBy: "number" | "latest";
-  };
-}
-
-export default function Home() {
+function Home() {
   const sortBy = useSearchParams().get("sortBy");
   const sortByParam = sortBy ? sortBy : "latest";
   const [data, setData] = useState<Document[]>([]);
@@ -37,5 +31,13 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <DataTable data={data} />
     </main>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense>
+      <Home />
+    </Suspense>
   );
 }
