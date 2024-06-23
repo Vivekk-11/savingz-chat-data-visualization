@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { getData } from "../../../services/queries";
 import { useEffect, useState } from "react";
 import { Document } from "mongodb";
+import { DataTable } from "./_components/data-table";
 
 interface Props {
   searchParams: {
@@ -33,6 +34,8 @@ export default function Home() {
   }, [sortByParam]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24"></main>
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <DataTable data={data} />
+    </main>
   );
 }
